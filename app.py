@@ -35,7 +35,7 @@ def index():
     return render_template('index.html')
 
 # ORM API routes
-# Route 1: Get all property data (THIS IS SLOW! AVOID USING THIS IF POSSIBLE IT'S JUST FOR TESTING)
+# Get all property data (THIS IS SLOW! AVOID USING THIS IF POSSIBLE IT'S JUST FOR TESTING)
 @app.route("/api/real_estate")
 def get_all_properties():
     session = Session(engine)
@@ -72,7 +72,7 @@ def get_all_properties():
 
     return jsonify(properties)
 
-# Route 2: Get a property by ID
+# Get a property by ID
 @app.route("/api/real_estate/<id>")
 def get_property_by_id(id):
     session = Session(engine)
@@ -108,7 +108,7 @@ def get_property_by_id(id):
     else:
         return jsonify({"error": f"Property with ID {id} not found."}), 404
 
-# Route 3: Filter properties by city
+# Filter properties by city
 @app.route("/api/real_estate/city/<city_name>")
 def filter_properties_by_city(city_name):
     session = Session(engine)
@@ -145,7 +145,7 @@ def filter_properties_by_city(city_name):
 
     return jsonify(properties)
 
-# Route 4: Filter properties by price range
+# Filter properties by price range
 @app.route("/api/real_estate/price/<min_price>/<max_price>")
 def filter_properties_by_price(min_price, max_price):
     session = Session(engine)
@@ -182,7 +182,7 @@ def filter_properties_by_price(min_price, max_price):
 
     return jsonify(properties)
 
-# Route 5: Properties by year built
+# Properties by year built
 @app.route("/api/real_estate/yearbuilt")
 def yearbuilt_distribution():
     query = "SELECT yearBuilt, COUNT(*) AS propertyCount FROM real_estate GROUP BY yearBuilt"
@@ -190,14 +190,14 @@ def yearbuilt_distribution():
     return jsonify(results)
 
 # Raw SQL API routes
-# Route 6: Property counts by zip code
+# Property counts by zip code
 @app.route("/api/real_estate/zip")
 def zip_distribution():
     query = "SELECT zipcode, COUNT(*) AS propertyCount FROM real_estate GROUP BY zipcode"
     results = execute_query(query)
     return jsonify(results)
 
-# Route 7: Average price per county
+# Average price per county
 @app.route("/api/real_estate/avg_price_county")
 def avg_price_by_county():
     query = """
@@ -209,22 +209,14 @@ def avg_price_by_county():
     results = execute_query(query)
     return jsonify(results)
 
-
-# Route 8: Price vs. living area
-@app.route("/api/real_estate/price_livingarea")
-def price_livingarea():
-    query = "SELECT price, livingArea FROM real_estate"
-    results = execute_query(query)
-    return jsonify(results)
-
-# Route 9: Feature analysis
+# Feature analysis
 @app.route("/api/real_estate/feature_distribution")
 def feature_distribution():
     query = "SELECT pool, spa, isNewConstruction, hasPetsAllowed, COUNT(*) AS propertyCount FROM real_estate GROUP BY pool, spa, isNewConstruction, hasPetsAllowed"
     results = execute_query(query)
     return jsonify(results)
 
-# Route 10: Property locations and some bonus info specifically for map visualization
+# Property locations and some bonus info specifically for map visualization
 @app.route("/api/real_estate/property_type_distribution")
 def property_type_distribution():
     query = """
@@ -235,7 +227,7 @@ def property_type_distribution():
     results = execute_query(query)
     return jsonify(results)
 
-# Route 11: Property locations and some bonus info specifically for map visualization
+# Property locations and some bonus info specifically for map visualization
 @app.route("/api/real_estate/map")
 def property_map():
     query = """
@@ -262,6 +254,7 @@ def property_map():
 def map():
     return render_template('map.html')
 
+# REWORK THIS to data table, needed for plotly dashboard
 @app.route('/scatter')
 def scatter():
     return render_template('scatter.html')
