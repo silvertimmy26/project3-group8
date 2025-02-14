@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 from sqlalchemy import create_engine, func, text
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -31,46 +31,10 @@ def execute_query(query):
 
 # Landing page
 @app.route("/")
-def welcome():
-    return (
-        f"<b>Welcome to the Real Estate API!</b><br/><br/>"
-        f"Use the API endpoints below to query real estate data. Or don't. It's your life.<br/>"
-        f"---------------------------------------------------------------------------------------------<br/>"
-        f"<b>1. Get ALL Property Data:</b><br/>"
-        f"/api/real_estate<br/><br/>"
+def index():
+    return render_template('index.html')
 
-        f"<b>2. Get a Property by ID:</b><br/>"
-        f"/api/real_estate/&lt;id&gt;<br/><br/>"
-
-        f"<b>3. Filter Properties by City:</b><br/>"
-        f"/api/real_estate/city/&lt;city_name&gt;<br/><br/>"
-
-        f"<b>4. Filter Properties by Price Range:</b><br/>"
-        f"/api/real_estate/price/&lt;min_price&gt;/&lt;max_price&gt;<br/><br/>"
-
-        f"<b>5. Properties by Year Built:</b><br/>"
-        f"/api/real_estate/yearbuilt<br/><br/>"
-
-        f"<b>6. Property Counts by Zip Code:</b><br/>"
-        f"/api/real_estate/zip<br/><br/>"
-
-        f"<b>7. Average Price per City:</b><br/>"
-        f"/api/real_estate/avg_price/city<br/><br/>"
-
-        f"<b>8. Price vs. Living Area:</b><br/>"
-        f"/api/real_estate/price_livingarea<br/><br/>"
-
-        f"<b>9. Feature Analysis:</b><br/>"
-        f"/api/real_estate/feature_distribution<br/><br/>"
-
-        f"<b>10. Property Type Distribution:</b><br/>"
-        f"/api/real_estate/property_type_distribution<br/><br/>"
-
-        f"<b>11. Map Visualization:</b><br/>"
-        f"/api/real_estate/map<br/><br/>"
-    )
-
-# ORM routes
+# ORM API routes
 # Route 1: Get all property data (THIS IS SLOW! AVOID USING THIS IF POSSIBLE IT'S JUST FOR TESTING)
 @app.route("/api/real_estate")
 def get_all_properties():
@@ -82,7 +46,7 @@ def get_all_properties():
     for result in results:
         property_dict = {
             "id": result.id,
-            "datePostedString": result.datePostedString,
+            "date": result.date,
             "price": result.price,
             "pricePerSquareFoot": result.pricePerSquareFoot,
             "bedrooms": result.bedrooms,
@@ -118,7 +82,7 @@ def get_property_by_id(id):
     if result:
         property_dict = {
             "id": result.id,
-            "datePostedString": result.datePostedString,
+            "date": result.date,
             "price": result.price,
             "pricePerSquareFoot": result.pricePerSquareFoot,
             "bedrooms": result.bedrooms,
@@ -155,7 +119,7 @@ def filter_properties_by_city(city_name):
     for result in results:
         property_dict = {
             "id": result.id,
-            "datePostedString": result.datePostedString,
+            "date": result.date,
             "price": result.price,
             "pricePerSquareFoot": result.pricePerSquareFoot,
             "bedrooms": result.bedrooms,
@@ -192,7 +156,7 @@ def filter_properties_by_price(min_price, max_price):
     for result in results:
         property_dict = {
             "id": result.id,
-            "datePostedString": result.datePostedString,
+            "date": result.date,
             "price": result.price,
             "pricePerSquareFoot": result.pricePerSquareFoot,
             "bedrooms": result.bedrooms,
@@ -225,7 +189,7 @@ def yearbuilt_distribution():
     results = execute_query(query)
     return jsonify(results)
 
-# Raw SQL routes
+# Raw SQL API routes
 # Route 6: Property counts by zip code
 @app.route("/api/real_estate/zip")
 def zip_distribution():
@@ -233,12 +197,18 @@ def zip_distribution():
     results = execute_query(query)
     return jsonify(results)
 
-# Route 7: Average price per city
-@app.route("/api/real_estate/avg_price/city")
-def avg_price_by_city():
-    query = "SELECT city, AVG(price) AS avgPrice FROM real_estate GROUP BY city"
+# Route 7: Average price per county
+@app.route("/api/real_estate/avg_price_county")
+def avg_price_by_county():
+    query = """
+    SELECT REPLACE(county, ' County', '') AS county, ROUND(AVG(price), 2) AS avgPrice
+    FROM real_estate
+    WHERE county IS NOT NULL
+    GROUP BY county
+    """
     results = execute_query(query)
     return jsonify(results)
+
 
 # Route 8: Price vs. living area
 @app.route("/api/real_estate/price_livingarea")
@@ -269,7 +239,7 @@ def property_type_distribution():
 @app.route("/api/real_estate/map")
 def property_map():
     query = """
-    SELECT city, zipcode, price, bedrooms, bathrooms, yearBuilt, livingArea, pool, homeType
+    SELECT city, price, bedrooms, bathrooms, yearBuilt, homeType, latitude, longitude
     FROM real_estate
     """
     results = execute_query(query)
@@ -285,6 +255,28 @@ def property_map():
 
 # Route 4: Filter properties by price range
 # http://127.0.0.1:5000/api/real_estate/price/3000000/5000000
+
+# Frontend visualizations
+# TODO: add redirect to home page from visualizations
+@app.route('/map')
+def map():
+    return render_template('map.html')
+
+@app.route('/scatter')
+def scatter():
+    return render_template('scatter.html')
+
+@app.route('/choropleth_county')
+def choropleth_county():
+    return render_template('choropleth_county.html')
+
+@app.route('/property_type_distribution')
+def property_type_distribution_page():
+    return render_template('property_type_distribution.html')
+
+@app.route('/year_built')
+def year_built():
+    return render_template('year_built.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
