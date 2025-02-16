@@ -3,31 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Welcome to Real Estate API Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lumen/bootstrap.min.css">
+    <style>
+        .larger-text {
+            /* Adjust the size as needed, I think it's too hard to read by default */
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Real Estate API!</h1>
-    <p>Use the API endpoints below to query real estate data. Or don't. It's your life.</p>
-    <hr>
-    <ul>
-        <li><b>Get ALL Property Data:</b> <a href="/api/real_estate">/api/real_estate</a></li>
-        <li><b>Get a Property by ID:</b> <code>/api/real_estate/&lt;id&gt;</code></li>
-        <li><b>Filter Properties by City:</b> <code>/api/real_estate/city/&lt;city_name&gt;</code></li>
-        <li><b>Filter Properties by Price Range:</b> <code>/api/real_estate/price/&lt;min_price&gt;/&lt;max_price&gt;</code></li>
-        <li><b>Properties by Year Built:</b> <a href="/api/real_estate/yearbuilt">/api/real_estate/yearbuilt</a></li>
-        <li><b>Property Counts by Zip Code:</b> <a href="/api/real_estate/zip">/api/real_estate/zip</a></li>
-        <li><b>Average Price per City:</b> <a href="/api/real_estate/avg_price_county">/api/real_estate/avg_price/city</a></li>
-        <li><b>Feature Analysis:</b> <a href="/api/real_estate/feature_distribution">/api/real_estate/feature_distribution</a></li>
-        <li><b>Property Type Distribution:</b> <a href="/api/real_estate/property_type_distribution">/api/real_estate/property_type_distribution</a></li>
-        <li><b>Map Visualization Data:</b> <a href="/api/real_estate/map">/api/real_estate/map</a></li>
-    </ul>
+    <div class="container larger-text">
+        <h1 class="mt-5">Welcome to the Real Estate API!</h1>
+        <p>Use the API endpoints below to query real estate data. Or don't. It's your life.</p>
+        <hr>
+        <ul>
+            <li><b>Get ALL Property Data:</b> <a href="/api/real_estate">/api/real_estate</a></li>
+            <li><b>Get a Property by ID:</b> <code>/api/real_estate/&lt;id&gt;</code></li>
+            <li><b>Filter Properties by City:</b> <code>/api/real_estate/city/&lt;city_name&gt;</code></li>
+            <li><b>Filter Properties by Price Range:</b> <code>/api/real_estate/price/&lt;min_price&gt;/&lt;max_price&gt;</code></li>
+            <li><b>Properties by Year Built:</b> <a href="/api/real_estate/yearbuilt">/api/real_estate/yearbuilt</a></li>
+            <li><b>Property Counts by Zip Code:</b> <a href="/api/real_estate/zip">/api/real_estate/zip</a></li>
+            <li><b>Average Price per City:</b> <a href="/api/real_estate/avg_price_county">/api/real_estate/avg_price/city</a></li>
+            <li><b>Feature Analysis:</b> <a href="/api/real_estate/feature_distribution">/api/real_estate/feature_distribution</a></li>
+            <li><b>Property Type Distribution:</b> <a href="/api/real_estate/property_type_distribution">/api/real_estate/property_type_distribution</a></li>
+            <li><b>Map Visualization Data:</b> <a href="/api/real_estate/map">/api/real_estate/map</a></li>
+        </ul>
 
-    <h2>Dashboard Visualizations:</h2>
-    <ul>
-        <li><a href="/map">Property Map</a></li>
-        <li><a href="/scatter">Price vs. Living Area Scatter Plot</a></li>
-        <li><a href="/choropleth_county">Average Price by County</a></li>
-        <li><a href="/property_type_distribution">Property Type Distribution Pie Chart</a></li>
-        <li><a href="/year_built">Properties by Year Built Bar Chart</a></li>
-    </ul>
+        <h2>Dashboards:</h2>
+        <ul>
+            <li><a href="/plotly_dashboard">Plotly Dashboard</a></li>
+            <li><a href="/map_dashboard">Map Dashboard</a></li>
+        </ul>
+    </div>
 </body>
 </html>
