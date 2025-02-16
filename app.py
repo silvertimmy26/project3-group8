@@ -182,58 +182,92 @@ def filter_properties_by_price(min_price, max_price):
 
     return jsonify(properties)
 
+# General visualization dashboard routes with city filter
 # Properties by year built
 @app.route("/api/real_estate/yearbuilt")
 def yearbuilt_distribution():
-    query = "SELECT yearBuilt, COUNT(*) AS propertyCount FROM real_estate GROUP BY yearBuilt"
+    city = request.args.get('city', '')
+    query = f"""
+    SELECT yearBuilt, COUNT(*) AS propertyCount
+    FROM real_estate
+    WHERE city LIKE '%{city}%'
+    GROUP BY yearBuilt
+    """
     results = execute_query(query)
     return jsonify(results)
 
-# Raw SQL API routes
-# Property counts by zip code
-@app.route("/api/real_estate/zip")
-def zip_distribution():
-    query = "SELECT zipcode, COUNT(*) AS propertyCount FROM real_estate GROUP BY zipcode"
+# Data table
+@app.route("/api/real_estate/data_table")
+def data_table():
+    city = request.args.get('city', '')
+    query = f"""
+    SELECT streetAddress, city, zipcode, price, bedrooms, bathrooms, livingArea, yearBuilt, homeType
+    FROM real_estate
+    WHERE city LIKE '%{city}%'
+    """
     results = execute_query(query)
     return jsonify(results)
 
 # Average price per county
 @app.route("/api/real_estate/avg_price_county")
 def avg_price_by_county():
-    query = """
+    city = request.args.get('city', '')
+    query = f"""
     SELECT REPLACE(county, ' County', '') AS county, ROUND(AVG(price), 2) AS avgPrice
     FROM real_estate
-    WHERE county IS NOT NULL
+    WHERE city LIKE '%{city}%' AND county IS NOT NULL
     GROUP BY county
     """
     results = execute_query(query)
     return jsonify(results)
 
+
 # Feature analysis
 @app.route("/api/real_estate/feature_distribution")
 def feature_distribution():
-    query = "SELECT pool, spa, isNewConstruction, hasPetsAllowed, COUNT(*) AS propertyCount FROM real_estate GROUP BY pool, spa, isNewConstruction, hasPetsAllowed"
+    query = """
+    SELECT pool, spa, isNewConstruction, hasPetsAllowed, COUNT(*) AS propertyCount 
+    FROM real_estate GROUP BY pool, spa, isNewConstruction, hasPetsAllowed
+    """
     results = execute_query(query)
     return jsonify(results)
 
-# Property locations and some bonus info specifically for map visualization
+# Property type counts
 @app.route("/api/real_estate/property_type_distribution")
 def property_type_distribution():
-    query = """
+    city = request.args.get('city', '')
+    query = f"""
     SELECT homeType, COUNT(*) AS count
     FROM real_estate
+    WHERE city LIKE '%{city}%'
     GROUP BY homeType
     """
     results = execute_query(query)
     return jsonify(results)
 
-# Property locations and some bonus info specifically for map visualization
+# Special route just for the map dashboard that filters on city and price range
+# Useful property info, but not all (for visual clarity)
 @app.route("/api/real_estate/map")
 def property_map():
-    query = """
+    # Pagination so that not everything is loaded at once
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 100))
+    offset = (page - 1) * limit
+    city = request.args.get('city', '')
+    min_price = request.args.get('min_price', '')
+    max_price = request.args.get('max_price', '')
+
+    query = f"""
     SELECT city, price, bedrooms, bathrooms, yearBuilt, homeType, latitude, longitude
     FROM real_estate
+    WHERE city LIKE '%{city}%' 
     """
+    if min_price:
+        query += f" AND price >= {min_price}"
+    if max_price:
+        query += f" AND price <= {max_price}"
+    query += f" LIMIT {limit} OFFSET {offset}"
+
     results = execute_query(query)
     return jsonify(results)
 
@@ -250,14 +284,13 @@ def property_map():
 
 # Frontend visualizations
 # TODO: add redirect to home page from visualizations
-@app.route('/map')
-def map():
-    return render_template('map.html')
+@app.route('/map_dashboard')
+def map_dashboard():
+    return render_template('map_dashboard.html')
 
-# REWORK THIS to data table, needed for plotly dashboard
-@app.route('/scatter')
-def scatter():
-    return render_template('scatter.html')
+@app.route("/data_table")
+def property_table():
+    return render_template("data_table.html")
 
 @app.route('/choropleth_county')
 def choropleth_county():
@@ -271,6 +304,9 @@ def property_type_distribution_page():
 def year_built():
     return render_template('year_built.html')
 
+@app.route('/plotly_dashboard')
+def plotly_dashboard():
+    return render_template('plotly_dashboard.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
-
