@@ -1,8 +1,8 @@
-function fetchData(city = '') {
-    let url = `/api/real_estate/data?city=${city}`;
+function fetchData(city = '', homeType = '', year = '') {
+    let url = `/api/real_estate/data?city=${city}&home_type=${homeType}&year=${year}`;
 
     // Property Type Distribution (Apache ECharts Pie Chart)
-    fetch('/api/real_estate/property_type_distribution?city=' + city)
+    fetch(`/api/real_estate/property_type_distribution?city=${city}&home_type=${homeType}&year=${year}`)
         .then(response => response.json())
         .then(data => {
             const chart = echarts.init(document.getElementById('property-type-chart'));
@@ -18,8 +18,7 @@ function fetchData(city = '') {
 
     // Average Price by County Choropleth (Apache ECharts Choropleth)
     Promise.all([
-        fetch('/api/real_estate/avg_price_county?city=' + city).then(res => res.json()),
-        // Awesome public GeoJSON data for California counties
+        fetch(`/api/real_estate/avg_price_county?city=${city}&home_type=${homeType}&year=${year}`).then(res => res.json()),
         fetch('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/california-counties.geojson').then(res => res.json())
     ])
     .then(([countyData, geoJson]) => {
@@ -62,7 +61,7 @@ function fetchData(city = '') {
     .catch(error => console.error('Error loading data:', error));
 
     // Year Built Distribution (Plotly Histogram)
-    fetch('/api/real_estate/yearbuilt?city=' + city)
+    fetch(`/api/real_estate/yearbuilt?city=${city}&home_type=${homeType}`)
         .then(response => response.json())
         .then(data => {
             const years = [];
@@ -84,13 +83,13 @@ function fetchData(city = '') {
             }], { 
                 title: 'Year Built Distribution', 
                 xaxis: { title: { text: 'Year Built' }, tickformat: 'd', range: [1850, 2025], dtick: 10 }, 
-                yaxis: { title: { text: 'Percentage of Houses' }, tickformat: '.2f', range: [0, 8] }, 
+                yaxis: { title: { text: 'Percentage of Houses' }, tickformat: '.2f', range: [0, 15] }, 
                 bargap: 0.05
             });
         });
 
     // Data Table (DataTables data table)
-    fetch('/api/real_estate/data_table?city=' + city)
+    fetch(`/api/real_estate/data_table?city=${city}&home_type=${homeType}&year=${year}`)
         .then(response => response.json())
         .then(data => {
             // Destroy existing DataTable instance if it exists OR ELSE suffer the consequences
@@ -118,7 +117,9 @@ function fetchData(city = '') {
 
 function applyFilters() {
     const city = document.getElementById('city-filter').value;
-    fetchData(city);
+    const homeType = document.getElementById('home-type-filter').value.toUpperCase();
+    const year = document.getElementById('year-filter').value;
+    fetchData(city, homeType, year);
 }
 
 // Initial data fetch

@@ -12,12 +12,15 @@ let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 
 // Clustering property markers for better performance
 const markers = L.markerClusterGroup();
+let layerControl; // Variable to store the layer control
 
-function fetchData(city = '', minPrice = '', maxPrice = '') {
+function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', year = '') {
     let url = `/api/real_estate/map`;
     if (city) url += `?city=${city}`;
     if (minPrice) url += `${city ? '&' : '?'}min_price=${minPrice}`;
     if (maxPrice) url += `${city || minPrice ? '&' : '?'}max_price=${maxPrice}`;
+    if (homeType) url += `${city || minPrice || maxPrice ? '&' : '?'}home_type=${homeType}`;
+    if (year) url += `${city || minPrice || maxPrice || homeType ? '&' : '?'}year=${year}`;
 
     fetch(url)
         .then(response => response.json())
@@ -78,10 +81,16 @@ function fetchData(city = '', minPrice = '', maxPrice = '') {
                         Cities: citiesLayer
                     };
 
-                    // Add the Layer Control
-                    L.control.layers(baseMaps, overlayMaps, {
-                        collapsed: false
-                    }).addTo(map);
+                    // Add the Layer Control if it doesn't already exist
+                    if (!layerControl) {
+                        layerControl = L.control.layers(baseMaps, overlayMaps, {
+                            collapsed: false
+                        }).addTo(map);
+                    } else {
+                        layerControl.addOverlay(heatLayer, 'HeatMap');
+                        layerControl.addOverlay(markers, 'Listings');
+                        layerControl.addOverlay(citiesLayer, 'Cities');
+                    }
                 });
         })
         .catch(error => console.error('Error fetching data:', error));
@@ -91,7 +100,9 @@ function applyFilters() {
     const city = document.getElementById('city-filter').value;
     const minPrice = document.getElementById('min-price-filter').value;
     const maxPrice = document.getElementById('max-price-filter').value;
-    fetchData(city, minPrice, maxPrice);
+    const homeType = document.getElementById('home-type-filter').value.toUpperCase();
+    const year = document.getElementById('year-filter').value;
+    fetchData(city, minPrice, maxPrice, homeType, year);
 }
 
 // Initial data fetch

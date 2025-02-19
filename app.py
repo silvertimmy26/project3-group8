@@ -24,7 +24,7 @@ def execute_query(query):
     with engine.connect() as conn:
         result = conn.execute(text(query))
         return [dict(row) for row in result.mappings()]
-    
+
 #################################################
 # Flask Routes
 #################################################
@@ -34,7 +34,6 @@ def execute_query(query):
 def index():
     return render_template('index.html')
 
-# ORM API routes
 # Get all property data (THIS IS SLOW! AVOID USING THIS IF POSSIBLE IT'S JUST FOR TESTING)
 @app.route("/api/real_estate")
 def get_all_properties():
@@ -182,15 +181,15 @@ def filter_properties_by_price(min_price, max_price):
 
     return jsonify(properties)
 
-# General visualization dashboard routes with city filter
 # Properties by year built
 @app.route("/api/real_estate/yearbuilt")
 def yearbuilt_distribution():
     city = request.args.get('city', '')
+    home_type = request.args.get('home_type', '')
     query = f"""
     SELECT yearBuilt, COUNT(*) AS propertyCount
     FROM real_estate
-    WHERE city LIKE '%{city}%'
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%'
     GROUP BY yearBuilt
     """
     results = execute_query(query)
@@ -200,10 +199,12 @@ def yearbuilt_distribution():
 @app.route("/api/real_estate/data_table")
 def data_table():
     city = request.args.get('city', '')
+    home_type = request.args.get('home_type', '')
+    year = request.args.get('year', '')
     query = f"""
     SELECT streetAddress, city, zipcode, price, bedrooms, bathrooms, livingArea, yearBuilt, homeType
     FROM real_estate
-    WHERE city LIKE '%{city}%'
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
     """
     results = execute_query(query)
     return jsonify(results)
@@ -212,22 +213,13 @@ def data_table():
 @app.route("/api/real_estate/avg_price_county")
 def avg_price_by_county():
     city = request.args.get('city', '')
+    home_type = request.args.get('home_type', '')
+    year = request.args.get('year', '')
     query = f"""
     SELECT REPLACE(county, ' County', '') AS county, ROUND(AVG(price), 2) AS avgPrice
     FROM real_estate
-    WHERE city LIKE '%{city}%' AND county IS NOT NULL
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%' AND county IS NOT NULL
     GROUP BY county
-    """
-    results = execute_query(query)
-    return jsonify(results)
-
-
-# Feature analysis
-@app.route("/api/real_estate/feature_distribution")
-def feature_distribution():
-    query = """
-    SELECT pool, spa, isNewConstruction, hasPetsAllowed, COUNT(*) AS propertyCount 
-    FROM real_estate GROUP BY pool, spa, isNewConstruction, hasPetsAllowed
     """
     results = execute_query(query)
     return jsonify(results)
@@ -236,22 +228,26 @@ def feature_distribution():
 @app.route("/api/real_estate/property_type_distribution")
 def property_type_distribution():
     city = request.args.get('city', '')
+    home_type = request.args.get('home_type', '')
+    year = request.args.get('year', '')
     query = f"""
     SELECT homeType, COUNT(*) AS count
     FROM real_estate
-    WHERE city LIKE '%{city}%'
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
     GROUP BY homeType
     """
     results = execute_query(query)
     return jsonify(results)
 
-# Special route just for the map dashboard that filters on city and price range
+# Special route just for the map dashboard that filters on city, price range, home type, and year
 # Useful property info, but not all (for visual clarity)
 @app.route("/api/real_estate/map")
 def property_map():
     city = request.args.get('city', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
+    home_type = request.args.get('home_type', '')
+    year = request.args.get('year', '')
 
     query = f"""
     SELECT city, price, bedrooms, bathrooms, yearBuilt, homeType, latitude, longitude
@@ -262,42 +258,18 @@ def property_map():
         query += f" AND price >= {min_price}"
     if max_price:
         query += f" AND price <= {max_price}"
+    if home_type:
+        query += f" AND homeType LIKE '%{home_type}%'"
+    if year:
+        query += f" AND yearBuilt LIKE '%{year}%'"
 
     results = execute_query(query)
     return jsonify(results)
 
-# Test URLs for routes with variable inputs (Copy & paste into your browser after running the app):
-
-# Route 2: Get a property by ID
-# http://127.0.0.1:5000/api/real_estate/7
-
-# Route 3: Filter properties by city
-# http://127.0.0.1:5000/api/real_estate/city/Los%20Angeles
-
-# Route 4: Filter properties by price range
-# http://127.0.0.1:5000/api/real_estate/price/3000000/5000000
-
 # Frontend visualizations
-# TODO: add redirect to home page from visualizations
 @app.route('/map_dashboard')
 def map_dashboard():
     return render_template('map_dashboard.html')
-
-@app.route("/data_table")
-def property_table():
-    return render_template("data_table.html")
-
-@app.route('/choropleth_county')
-def choropleth_county():
-    return render_template('choropleth_county.html')
-
-@app.route('/property_type_distribution')
-def property_type_distribution_page():
-    return render_template('property_type_distribution.html')
-
-@app.route('/year_built')
-def year_built():
-    return render_template('year_built.html')
 
 @app.route('/plotly_dashboard')
 def plotly_dashboard():

@@ -25,17 +25,37 @@
 <body>
     <div class="container">
         <h1 class="mt-5 text-center font-weight-bold">Real Estate Map Dashboard</h1>
-        <!-- Filter inputs for city and price range -->
+        <!-- Filter inputs for city, price range, home type, and year -->
         <div class="filter-container">
             <label for="city-filter">City:</label>
             <input type="text" id="city-filter" placeholder="Enter city name" class="form-control">
             <label for="min-price-filter">Min Price:</label>
-            <input type="number" id="min-price-filter" placeholder="Min price" class="form-control">
+            <input type="number" id="min-price-filter" placeholder="Enter minimum price" class="form-control">
             <label for="max-price-filter">Max Price:</label>
-            <input type="number" id="max-price-filter" placeholder="Max price" class="form-control">
+            <input type="number" id="max-price-filter" placeholder="Enter maximum price" class="form-control">
+            <label for="home-type-filter">Home Type:</label>
+            <input type="text" id="home-type-filter" placeholder="Enter home type" class="form-control">
+            <label for="year-filter">Year:</label>
+            <input type="number" id="year-filter" placeholder="Enter year" class="form-control">
             <button onclick="applyFilters()" class="btn btn-primary mt-2">Apply Filters</button>
         </div>
+    
+        <!-- Home types -->
+        <div class="home-types">
+            <h5>Home Types:</h5>
+            <ul>
+                <li>APARTMENT</li>
+                <li>CONDO</li>
+                <li>LOT</li>
+                <li>MULTI_FAMILY</li>
+                <li>SINGLE_FAMILY</li>
+                <li>TOWNHOUSE</li>
+            </ul>
+        </div>
+
+        <!-- Map -->
         <div id="map"></div>
+
     </div>
     <script src="/static/js/map.js"></script>
 </body>
