@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Real Estate Map Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lumen/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
@@ -13,17 +14,39 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="../static/js/leaflet-heat.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        #map { height: 600px; }
-        .filter-container { margin-bottom: 20px; }
-        .custom-icon {
-            font-size: 24px;
-            color: #007bff;
-        }
+        #map { height: 800px; }
+        .larger-text { font-size: 1.2rem; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <a class="navbar-brand" href="/">Real Estate API</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/plotly_dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/map_dashboard">Map</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about_us">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/works_cited">Works Cited</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container larger-text">
         <h1 class="mt-5 text-center font-weight-bold">Real Estate Map Dashboard</h1>
         <!-- Filter inputs for city, price range, home type, and year -->
         <div class="filter-container">
@@ -55,7 +78,6 @@
 
         <!-- Map -->
         <div id="map"></div>
-
     </div>
     <script src="/static/js/map.js"></script>
 </body>

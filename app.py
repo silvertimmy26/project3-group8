@@ -266,7 +266,6 @@ def property_map():
     results = execute_query(query)
     return jsonify(results)
 
-# Frontend visualizations
 @app.route('/map_dashboard')
 def map_dashboard():
     return render_template('map_dashboard.html')
@@ -274,6 +273,14 @@ def map_dashboard():
 @app.route('/plotly_dashboard')
 def plotly_dashboard():
     return render_template('plotly_dashboard.html')
+
+@app.route("/about_us")
+def about_us():
+    return render_template('about_us.html')
+
+@app.route("/works_cited")
+def works_cited():
+    return render_template('works_cited.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
