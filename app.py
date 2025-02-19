@@ -186,12 +186,20 @@ def filter_properties_by_price(min_price, max_price):
 def yearbuilt_distribution():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
+    min_price = request.args.get('min_price', '')
+    max_price = request.args.get('max_price', '')
+    
     query = f"""
     SELECT yearBuilt, COUNT(*) AS propertyCount
     FROM real_estate
     WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%'
-    GROUP BY yearBuilt
     """
+    if min_price:
+        query += f" AND price >= {min_price}"
+    if max_price:
+        query += f" AND price <= {max_price}"
+    query += " GROUP BY yearBuilt"
+    
     results = execute_query(query)
     return jsonify(results)
 
@@ -201,11 +209,19 @@ def data_table():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
     year = request.args.get('year', '')
+    min_price = request.args.get('min_price', '')
+    max_price = request.args.get('max_price', '')
+    
     query = f"""
     SELECT streetAddress, city, zipcode, price, bedrooms, bathrooms, livingArea, yearBuilt, homeType
     FROM real_estate
     WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
     """
+    if min_price:
+        query += f" AND price >= {min_price}"
+    if max_price:
+        query += f" AND price <= {max_price}"
+    
     results = execute_query(query)
     return jsonify(results)
 
@@ -215,12 +231,20 @@ def avg_price_by_county():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
     year = request.args.get('year', '')
+    min_price = request.args.get('min_price', '')
+    max_price = request.args.get('max_price', '')
+    
     query = f"""
     SELECT REPLACE(county, ' County', '') AS county, ROUND(AVG(price), 2) AS avgPrice
     FROM real_estate
     WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%' AND county IS NOT NULL
-    GROUP BY county
     """
+    if min_price:
+        query += f" AND price >= {min_price}"
+    if max_price:
+        query += f" AND price <= {max_price}"
+    query += " GROUP BY county"
+    
     results = execute_query(query)
     return jsonify(results)
 
@@ -230,12 +254,20 @@ def property_type_distribution():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
     year = request.args.get('year', '')
+    min_price = request.args.get('min_price', '')
+    max_price = request.args.get('max_price', '')
+    
     query = f"""
     SELECT homeType, COUNT(*) AS count
     FROM real_estate
     WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
-    GROUP BY homeType
     """
+    if min_price:
+        query += f" AND price >= {min_price}"
+    if max_price:
+        query += f" AND price <= {max_price}"
+    query += " GROUP BY homeType"
+    
     results = execute_query(query)
     return jsonify(results)
 

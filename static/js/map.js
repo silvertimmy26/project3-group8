@@ -86,10 +86,6 @@ function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', year 
                         layerControl = L.control.layers(baseMaps, overlayMaps, {
                             collapsed: false
                         }).addTo(map);
-                    } else {
-                        layerControl.addOverlay(heatLayer, 'HeatMap');
-                        layerControl.addOverlay(markers, 'Listings');
-                        layerControl.addOverlay(citiesLayer, 'Cities');
                     }
                 });
         })
