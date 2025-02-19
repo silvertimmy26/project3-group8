@@ -249,10 +249,6 @@ def property_type_distribution():
 # Useful property info, but not all (for visual clarity)
 @app.route("/api/real_estate/map")
 def property_map():
-    # Pagination so that not everything is loaded at once
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 100))
-    offset = (page - 1) * limit
     city = request.args.get('city', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
@@ -266,7 +262,6 @@ def property_map():
         query += f" AND price >= {min_price}"
     if max_price:
         query += f" AND price <= {max_price}"
-    query += f" LIMIT {limit} OFFSET {offset}"
 
     results = execute_query(query)
     return jsonify(results)

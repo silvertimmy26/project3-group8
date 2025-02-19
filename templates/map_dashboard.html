@@ -7,12 +7,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="../static/js/leaflet-heat.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         #map { height: 600px; }
         .filter-container { margin-bottom: 20px; }
+        .custom-icon {
+            font-size: 24px;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -30,51 +37,6 @@
         </div>
         <div id="map"></div>
     </div>
-    <script>
-        // Set initial map view to center of the USA
-        const map = L.map('map').setView([39.8283, 98.5795], 4);
-        // Add OpenStreetMap tiles to the map
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Clustering property markers for better performance (it is SO BAD without it trust me)
-        const markers = L.markerClusterGroup();
-
-        function fetchData(page = 1, limit = 100, city = '', minPrice = '', maxPrice = '') {
-            let url = `/api/real_estate/map?page=${page}&limit=${limit}`;
-            if (city) url += `&city=${city}`;
-            if (minPrice) url += `&min_price=${minPrice}`;
-            if (maxPrice) url += `&max_price=${maxPrice}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(d => {
-                        const marker = L.marker([d.latitude, d.longitude])
-                            .bindPopup(`City: ${d.city}<br>Price: ${d.price}<br>Bedrooms: ${d.bedrooms}<br>Bathrooms: ${d.bathrooms}<br>Year Built: ${d.yearBuilt}<br>Home Type: ${d.homeType}`);
-                        markers.addLayer(marker);
-                    });
-                    map.addLayer(markers);
-
-                    // Fetch more data when ready
-                    if (data.length === limit) {
-                        fetchData(page + 1, limit, city, minPrice, maxPrice);
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function applyFilters() {
-            const city = document.getElementById('city-filter').value;
-            const minPrice = document.getElementById('min-price-filter').value;
-            const maxPrice = document.getElementById('max-price-filter').value;
-            markers.clearLayers();
-            fetchData(1, 100, city, minPrice, maxPrice);
-        }
-
-        // Initial data fetch
-        fetchData();
-    </script>
+    <script src="/static/js/map.js"></script>
 </body>
 </html>
