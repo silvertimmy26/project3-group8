@@ -1,8 +1,8 @@
-function fetchData(city = '', homeType = '', year = '', minPrice = '', maxPrice = '') {
-    let url = `/api/real_estate/data?city=${city}&home_type=${homeType}&year=${year}&min_price=${minPrice}&max_price=${maxPrice}`;
-
+function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPrice = '', maxPrice = '') {
+    let url = `/api/real_estate/data?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`;
+    
     // Property Type Distribution (Apache ECharts Pie Chart)
-    fetch(`/api/real_estate/property_type_distribution?city=${city}&home_type=${homeType}&year=${year}&min_price=${minPrice}&max_price=${maxPrice}`)
+    fetch(`/api/real_estate/property_type_distribution?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`)
         .then(response => response.json())
         .then(data => {
             const chart = echarts.init(document.getElementById('property-type-chart'));
@@ -18,7 +18,7 @@ function fetchData(city = '', homeType = '', year = '', minPrice = '', maxPrice 
 
     // Average Price by County Choropleth (Apache ECharts Choropleth)
     Promise.all([
-        fetch(`/api/real_estate/avg_price_county?city=${city}&home_type=${homeType}&year=${year}&min_price=${minPrice}&max_price=${maxPrice}`).then(res => res.json()),
+        fetch(`/api/real_estate/avg_price_county?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`).then(res => res.json()),
         fetch('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/california-counties.geojson').then(res => res.json())
     ])
     .then(([countyData, geoJson]) => {
@@ -61,7 +61,7 @@ function fetchData(city = '', homeType = '', year = '', minPrice = '', maxPrice 
     .catch(error => console.error('Error loading data:', error));
 
     // Year Built Distribution (Plotly Histogram)
-    fetch(`/api/real_estate/yearbuilt?city=${city}&home_type=${homeType}&min_price=${minPrice}&max_price=${maxPrice}`)
+    fetch(`/api/real_estate/yearbuilt?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`)
         .then(response => response.json())
         .then(data => {
             const years = [];
@@ -89,7 +89,7 @@ function fetchData(city = '', homeType = '', year = '', minPrice = '', maxPrice 
         });
 
     // Data Table (DataTables data table)
-    fetch(`/api/real_estate/data_table?city=${city}&home_type=${homeType}&year=${year}&min_price=${minPrice}&max_price=${maxPrice}`)
+    fetch(`/api/real_estate/data_table?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`)
         .then(response => response.json())
         .then(data => {
             // Destroy existing DataTable instance if it exists OR ELSE suffer the consequences
@@ -118,11 +118,12 @@ function fetchData(city = '', homeType = '', year = '', minPrice = '', maxPrice 
 function applyFilters() {
     const city = document.getElementById('city-filter').value;
     const homeType = document.getElementById('home-type-filter').value.toUpperCase();
-    const year = document.getElementById('year-filter').value;
+    const minYear = document.getElementById('min-year-filter').value;
+    const maxYear = document.getElementById('max-year-filter').value;
     const minPrice = document.getElementById('min-price-filter').value;
     const maxPrice = document.getElementById('max-price-filter').value;
-    fetchData(city, homeType, year, minPrice, maxPrice);
+    fetchData(city, homeType, minYear, maxYear, minPrice, maxPrice);
 }
 
 // Initial data fetch
-fetchData(); 
+fetchData();

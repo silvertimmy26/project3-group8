@@ -188,6 +188,8 @@ def yearbuilt_distribution():
     home_type = request.args.get('home_type', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
+    min_year = request.args.get('min_year', '')
+    max_year = request.args.get('max_year', '')
     
     query = f"""
     SELECT yearBuilt, COUNT(*) AS propertyCount
@@ -198,6 +200,10 @@ def yearbuilt_distribution():
         query += f" AND price >= {min_price}"
     if max_price:
         query += f" AND price <= {max_price}"
+    if min_year:
+        query += f" AND yearBuilt >= {min_year}"
+    if max_year:
+        query += f" AND yearBuilt <= {max_year}"
     query += " GROUP BY yearBuilt"
     
     results = execute_query(query)
@@ -208,19 +214,25 @@ def yearbuilt_distribution():
 def data_table():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
-    year = request.args.get('year', '')
+    min_year = request.args.get('min_year', '')
+    max_year = request.args.get('max_year', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
     
     query = f"""
     SELECT streetAddress, city, zipcode, price, bedrooms, bathrooms, livingArea, yearBuilt, homeType
     FROM real_estate
-    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%'
     """
+    if min_year:
+        query += f" AND yearBuilt >= {min_year}"
+    if max_year:
+        query += f" AND yearBuilt <= {max_year}"
     if min_price:
         query += f" AND price >= {min_price}"
     if max_price:
         query += f" AND price <= {max_price}"
+    query += " ORDER BY price ASC"
     
     results = execute_query(query)
     return jsonify(results)
@@ -230,15 +242,20 @@ def data_table():
 def avg_price_by_county():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
-    year = request.args.get('year', '')
+    min_year = request.args.get('min_year', '')
+    max_year = request.args.get('max_year', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
     
     query = f"""
     SELECT REPLACE(county, ' County', '') AS county, ROUND(AVG(price), 2) AS avgPrice
     FROM real_estate
-    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%' AND county IS NOT NULL
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND county IS NOT NULL
     """
+    if min_year:
+        query += f" AND yearBuilt >= {min_year}"
+    if max_year:
+        query += f" AND yearBuilt <= {max_year}"
     if min_price:
         query += f" AND price >= {min_price}"
     if max_price:
@@ -253,19 +270,24 @@ def avg_price_by_county():
 def property_type_distribution():
     city = request.args.get('city', '')
     home_type = request.args.get('home_type', '')
-    year = request.args.get('year', '')
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
+    min_year = request.args.get('min_year', '')
+    max_year = request.args.get('max_year', '')
     
     query = f"""
     SELECT homeType, COUNT(*) AS count
     FROM real_estate
-    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%' AND yearBuilt LIKE '%{year}%'
+    WHERE city LIKE '%{city}%' AND homeType LIKE '%{home_type}%'
     """
     if min_price:
         query += f" AND price >= {min_price}"
     if max_price:
         query += f" AND price <= {max_price}"
+    if min_year:
+        query += f" AND yearBuilt >= {min_year}"
+    if max_year:
+        query += f" AND yearBuilt <= {max_year}"
     query += " GROUP BY homeType"
     
     results = execute_query(query)
@@ -279,7 +301,8 @@ def property_map():
     min_price = request.args.get('min_price', '')
     max_price = request.args.get('max_price', '')
     home_type = request.args.get('home_type', '')
-    year = request.args.get('year', '')
+    min_year = request.args.get('min_year', '')
+    max_year = request.args.get('max_year', '')
 
     query = f"""
     SELECT city, price, bedrooms, bathrooms, yearBuilt, homeType, latitude, longitude
@@ -292,19 +315,21 @@ def property_map():
         query += f" AND price <= {max_price}"
     if home_type:
         query += f" AND homeType LIKE '%{home_type}%'"
-    if year:
-        query += f" AND yearBuilt LIKE '%{year}%'"
+    if min_year:
+        query += f" AND yearBuilt >= {min_year}"
+    if max_year:
+        query += f" AND yearBuilt <= {max_year}"
 
     results = execute_query(query)
     return jsonify(results)
 
-@app.route('/map_dashboard')
+@app.route('/map')
 def map_dashboard():
-    return render_template('map_dashboard.html')
+    return render_template('map.html')
 
-@app.route('/plotly_dashboard')
+@app.route('/dashboard')
 def plotly_dashboard():
-    return render_template('plotly_dashboard.html')
+    return render_template('dashboard.html')
 
 @app.route("/about_us")
 def about_us():

@@ -14,13 +14,8 @@ let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 const markers = L.markerClusterGroup();
 let layerControl; // Variable to store the layer control
 
-function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', year = '') {
-    let url = `/api/real_estate/map`;
-    if (city) url += `?city=${city}`;
-    if (minPrice) url += `${city ? '&' : '?'}min_price=${minPrice}`;
-    if (maxPrice) url += `${city || minPrice ? '&' : '?'}max_price=${maxPrice}`;
-    if (homeType) url += `${city || minPrice || maxPrice ? '&' : '?'}home_type=${homeType}`;
-    if (year) url += `${city || minPrice || maxPrice || homeType ? '&' : '?'}year=${year}`;
+function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', minYear = '', maxYear = '') {
+    let url = `/api/real_estate/map?city=${city}&min_price=${minPrice}&max_price=${maxPrice}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}`;
 
     fetch(url)
         .then(response => response.json())
@@ -97,8 +92,9 @@ function applyFilters() {
     const minPrice = document.getElementById('min-price-filter').value;
     const maxPrice = document.getElementById('max-price-filter').value;
     const homeType = document.getElementById('home-type-filter').value.toUpperCase();
-    const year = document.getElementById('year-filter').value;
-    fetchData(city, minPrice, maxPrice, homeType, year);
+    const minYear = document.getElementById('min-year-filter').value;
+    const maxYear = document.getElementById('max-year-filter').value;
+    fetchData(city, minPrice, maxPrice, homeType, minYear, maxYear);
 }
 
 // Initial data fetch

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Real Estate General Visualization Dashboard</title>
+    <title>Real Estate Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lumen/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
@@ -28,10 +28,10 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/plotly_dashboard">Dashboard</a>
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/map_dashboard">Map</a>
+                    <a class="nav-link" href="/map">Map</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/about_us">About Us</a>
@@ -44,7 +44,7 @@
     </nav>
 
     <div class="container larger-text">
-        <h1 class="mt-5 text-center font-weight-bold">Real Estate General Visualization Dashboard</h1>
+        <h1 class="mt-5 text-center font-weight-bold">Real Estate Dashboard</h1>
 
         <!-- Filter inputs for city, price range, home type, and year -->
         <div class="filter-container">
@@ -56,8 +56,10 @@
             <input type="number" id="max-price-filter" placeholder="Enter maximum price" class="form-control">
             <label for="home-type-filter">Home Type:</label>
             <input type="text" id="home-type-filter" placeholder="Enter home type" class="form-control">
-            <label for="year-filter">Year:</label>
-            <input type="number" id="year-filter" placeholder="Enter year" class="form-control">
+            <label for="min-year-filter">Min Year:</label>
+            <input type="number" id="min-year-filter" placeholder="Enter minimum year" class="form-control">
+            <label for="max-year-filter">Max Year:</label>
+            <input type="number" id="max-year-filter" placeholder="Enter maximum year" class="form-control">
             <button onclick="applyFilters()" class="btn btn-primary mt-2">Apply Filters</button>
         </div>
 
