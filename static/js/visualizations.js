@@ -1,6 +1,4 @@
 function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPrice = '', maxPrice = '') {
-    let url = `/api/real_estate/data?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`;
-    
     // Property Type Distribution (Apache ECharts Pie Chart)
     fetch(`/api/real_estate/property_type_distribution?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`)
         .then(response => response.json())
@@ -35,6 +33,8 @@ function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPric
             value: dataMap[feature.properties.name] || 0 // Fill 0 if no data
         }));
 
+        const maxPrice = Math.max(...countyData.map(item => item.avgPrice));
+
         chart.setOption({
             title: { text: 'Average Property Price by County', left: 'center' },
             tooltip: {
@@ -43,7 +43,7 @@ function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPric
             },
             visualMap: {
                 min: 0,
-                max: 3000000, // Adjust depending on price range
+                max: maxPrice, // Dynamically set max value
                 text: ['High', 'Low'],
                 realtime: false,
                 calculable: true,
@@ -57,8 +57,7 @@ function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPric
                 data: formattedData
             }]
         });
-    })
-    .catch(error => console.error('Error loading data:', error));
+    });
 
     // Year Built Distribution (Plotly Histogram)
     fetch(`/api/real_estate/yearbuilt?city=${city}&home_type=${homeType}&min_year=${minYear}&max_year=${maxYear}&min_price=${minPrice}&max_price=${maxPrice}`)

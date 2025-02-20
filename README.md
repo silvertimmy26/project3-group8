@@ -22,8 +22,8 @@ This project provides data visualization for real estate data in California. The
 
 ### Templates
 - `templates/index.html`: The landing page of the application.
-- `templates/map_dashboard.html`: The HTML template for the map dashboard.
-- `templates/plotly_dashboard.html`: The HTML template for the Plotly (and other libraries) dashboard.
+- `templates/map.html`: The HTML template for the map dashboard.
+- `templates/dashboard.html`: The HTML template for the Plotly (and other libraries) dashboard.
 - `templates/works_cited.html`: References for our project.
 - `templates/about_us.html`: Gives some details about the team behind our project. Hey, that's us!
 
@@ -31,7 +31,7 @@ This project provides data visualization for real estate data in California. The
 - `static/js/map.js`: JavaScript file for handling the map dashboard functionalities.
 - `static/js/visualizations.js`: JavaScript file for handling the Plotly dashboard visualizations.
 - `static/js/leaflet-heat.js`: Open source JavaScript library for creating heatmaps with Leaflet, not our creation. Credit listed at the top of the file.
-- `static/images`: Photos of us for the 'About Us' section.
+- `static/images`: Photos of us for the 'About Us' section, and for the buttons on the landing page.
 
 ## License
 This project is licensed under the MIT License.

@@ -60,7 +60,7 @@ function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', minYe
                     const citiesLayer = L.geoJson(cityData, {
                         style: mapStyle,
                         onEachFeature: function (feature, layer) {
-                            layer.bindPopup(feature.properties.city);
+                            layer.bindPopup(feature.properties.name);
                         }
                     });
 
