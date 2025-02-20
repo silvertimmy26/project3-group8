@@ -14,7 +14,7 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="../static/js/leaflet-heat.js"></script>
     <style>
-        #map { height: 600px; }
+        #map { height: 600px; margin-top: 20px;}
     </style>
 </head>
 <body>
@@ -56,25 +56,20 @@
             <label for="max-price-filter">Max Price:</label>
             <input type="number" id="max-price-filter" placeholder="Enter maximum price" class="form-control">
             <label for="home-type-filter">Home Type:</label>
-            <input type="text" id="home-type-filter" placeholder="Enter home type" class="form-control">
+            <select id="home-type-filter" class="form-control">
+                <option value="">Select home type</option>
+                <option value="APARTMENT">APARTMENT</option>
+                <option value="CONDO">CONDO</option>
+                <option value="LOT">LOT</option>
+                <option value="MULTI_FAMILY">MULTI_FAMILY</option>
+                <option value="SINGLE_FAMILY">SINGLE_FAMILY</option>
+                <option value="TOWNHOUSE">TOWNHOUSE</option>
+            </select>
             <label for="min-year-filter">Min Year:</label>
             <input type="number" id="min-year-filter" placeholder="Enter minimum year" class="form-control">
             <label for="max-year-filter">Max Year:</label>
             <input type="number" id="max-year-filter" placeholder="Enter maximum year" class="form-control">
             <button onclick="applyFilters()" class="btn btn-primary mt-2">Apply Filters</button>
-        </div>
-    
-        <!-- Home types -->
-        <div class="home-types">
-            <h5>Home Types:</h5>
-            <ul>
-                <li>APARTMENT</li>
-                <li>CONDO</li>
-                <li>LOT</li>
-                <li>MULTI_FAMILY</li>
-                <li>SINGLE_FAMILY</li>
-                <li>TOWNHOUSE</li>
-            </ul>
         </div>
 
         <!-- Map -->

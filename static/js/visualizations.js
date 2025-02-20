@@ -80,11 +80,31 @@ function fetchData(city = '', homeType = '', minYear = '', maxYear = '', minPric
                 xbins: { size: 5 },
                 hovertemplate: '%{x}, %{y:.2f}%<extra></extra>'
             }], { 
-                title: 'Year Built Distribution', 
-                xaxis: { title: { text: 'Year Built' }, tickformat: 'd', range: [1850, 2025], dtick: 10 }, 
-                yaxis: { title: { text: 'Percentage of Houses' }, tickformat: '.2f', range: [0, 15] }, 
+                title: {
+                    text: 'Year Built Distribution',
+                    font: { family: 'Arial Black, Arial, sans-serif', size: 18 }, // I don't think there's a way to bold a plotly title in javascript, so this is close enough to the other vis titles
+                    x: 0.5,
+                    xanchor: 'center'
+                },
+                font: {
+                    family: 'Source Sans Pro, Arial, sans-serif', 
+                    size: 14,
+                    color: '#333' // Dark gray similar other visualizations
+                },
+                margin: { t: 60 },
+                xaxis: { 
+                    title: { text: 'Year Built' }, 
+                    tickformat: 'd', 
+                    range: [1850, 2025], 
+                    dtick: 10 
+                }, 
+                yaxis: { 
+                    title: { text: 'Percentage of Houses' }, 
+                    tickformat: '.2f', 
+                    range: [0, 15] 
+                }, 
                 bargap: 0.05
-            });
+            });                     
         });
 
     // Data Table (DataTables data table)
