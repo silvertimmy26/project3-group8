@@ -1,3 +1,7 @@
+html, * {
+  font-family: 'Comic Sans MS', sans-serif;
+}
+
 .navbar-custom {
     background-color: #2c3e50;
 }
