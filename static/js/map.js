@@ -45,7 +45,7 @@ function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', minYe
                 blur: 10
             });
 
-            // Add Cities Overlay
+            // COUNTIES overlay, theres some misnaming about city but its county
             const queryUrl = "https://raw.githubusercontent.com/codeforgermany/click_that_hood/refs/heads/main/public/data/california-counties.geojson";
             fetch(queryUrl)
                 .then(response => response.json())
@@ -73,7 +73,7 @@ function fetchData(city = '', minPrice = '', maxPrice = '', homeType = '', minYe
                     const overlayMaps = {
                         HeatMap: heatLayer,
                         Listings: markers,
-                        Cities: citiesLayer
+                        Counties: citiesLayer // its COUNTIES NOT CITIES!!!
                     };
 
                     // Add the Layer Control if it doesn't already exist
